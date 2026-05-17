@@ -49,11 +49,19 @@ export default function ResumeBuilder() {
   const [saved, setSaved] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: s }) => {
+    const init = async () => {
+      const { data: s } = await supabase.auth.getSession();
       if (!s.session) { router.push("/"); return; }
-    });
-    loadResume();
+      const { data: row } = await supabase.from("resumes").select("*").eq("id", id).single();
+      if (row) {
+        setTitle(row.title);
+        if (row.data && Object.keys(row.data).length > 0) setData(row.data);
+      }
+    };
+    init();
   }, []);
 
   const loadResume = async () => {
@@ -77,7 +85,7 @@ export default function ResumeBuilder() {
 
   const updateExp = (i: number, field: keyof WorkExperience, value: string) => {
     const exp = [...data.experience];
-    (exp[i] as Record<string, unknown>)[field] = value;
+    (exp[i] as unknown as Record<string, string>)[field] = value;
     set("experience", exp);
   };
 
@@ -104,7 +112,7 @@ export default function ResumeBuilder() {
 
   const updateEdu = (i: number, field: keyof Education, value: string) => {
     const edu = [...data.education];
-    (edu[i] as Record<string, unknown>)[field] = value;
+    (edu[i] as unknown as Record<string, string>)[field] = value;
     set("education", edu);
   };
 
