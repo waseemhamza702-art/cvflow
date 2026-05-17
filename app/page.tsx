@@ -462,7 +462,6 @@ const handleReset = async () => {
 </button>
 
         {mode === "login" && (
-          {mode === "login" && (
   <div className="flex flex-col items-center gap-2 mt-4">
     <button
       onClick={() => { setMode("reset"); setError(null); setSuccess(null); }}
