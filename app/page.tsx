@@ -399,7 +399,7 @@ const handleReset = async () => {
       ← Back to Sign In
     </button>
     <p className="text-white font-semibold mt-3 mb-1">Reset your password</p>
-    <p className="text-xs text-gray-500">Enter your email and we'll send you a reset link.</p>
+    <p className="text-xs text-gray-500">Enter your email and we&apos;ll send you a reset link.</p>
   </div>
 )}
 
