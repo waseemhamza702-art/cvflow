@@ -302,7 +302,7 @@ function CVFlowLogo() {
 
 // ─── Auth Modal ───────────────────────────────────────────────────────────────
 
-type AuthMode = "login" | "signup";
+type AuthMode = "login" | "signup" | "reset";
 
 function AuthModal({ onClose }: { onClose: () => void }) {
   const [mode, setMode] = useState<AuthMode>("login");
@@ -336,6 +336,18 @@ function AuthModal({ onClose }: { onClose: () => void }) {
     setLoading(false);
   };
 
+const handleReset = async () => {
+  setError(null);
+  setSuccess(null);
+  setLoading(true);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://art-cvflow.vercel.app/",
+  });
+  if (error) setError(error.message);
+  else setSuccess("Password reset email sent! Check your inbox.");
+  setLoading(false);
+};
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
@@ -360,21 +372,36 @@ function AuthModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex glass rounded-xl p-1 mb-6 border border-white/[0.06]">
-          {(["login", "signup"] as AuthMode[]).map((m) => (
-            <button
-              key={m}
-              onClick={() => { setMode(m); setError(null); setSuccess(null); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                mode === m
-                  ? "bg-violet-600 text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-300"
-              }`}
-            >
-              {m === "login" ? "Sign In" : "Sign Up"}
-            </button>
-          ))}
-        </div>
+        {mode !== "reset" && (
+  <div className="flex glass rounded-xl p-1 mb-6 border border-white/[0.06]">
+    {(["login", "signup"] as AuthMode[]).map((m) => (
+      <button
+        key={m}
+        onClick={() => { setMode(m); setError(null); setSuccess(null); }}
+        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+          mode === m
+            ? "bg-violet-600 text-white shadow-sm"
+            : "text-gray-500 hover:text-gray-300"
+        }`}
+      >
+        {m === "login" ? "Sign In" : "Sign Up"}
+      </button>
+    ))}
+  </div>
+)}
+
+{mode === "reset" && (
+  <div className="mb-6">
+    <button
+      onClick={() => { setMode("login"); setError(null); setSuccess(null); }}
+      className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white transition-colors"
+    >
+      ← Back to Sign In
+    </button>
+    <p className="text-white font-semibold mt-3 mb-1">Reset your password</p>
+    <p className="text-xs text-gray-500">Enter your email and we'll send you a reset link.</p>
+  </div>
+)}
 
         {/* Fields */}
         <div className="space-y-3 mb-4">
@@ -419,33 +446,38 @@ function AuthModal({ onClose }: { onClose: () => void }) {
 
         {/* Submit */}
         <button
-          onClick={handleSubmit}
-          disabled={loading || !email || !password}
-          className="w-full btn-primary py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-            </svg>
-          ) : (
-            <IconSparkles className="w-4 h-4" />
-          )}
-          {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
-        </button>
+  onClick={mode === "reset" ? handleReset : handleSubmit}
+  disabled={loading || !email || (mode !== "reset" && !password)}
+  className="w-full btn-primary py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+>
+  {loading ? (
+    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+    </svg>
+  ) : (
+    <IconSparkles className="w-4 h-4" />
+  )}
+  {loading ? "Please wait…" : mode === "login" ? "Sign In" : mode === "signup" ? "Create Account" : "Send Reset Email"}
+</button>
 
         {mode === "login" && (
-          <p className="text-center text-xs text-gray-600 mt-4">
-            Don&apos;t have an account?{" "}
-            <button onClick={() => setMode("signup")} className="text-violet-400 hover:text-violet-300 transition-colors">
-              Sign up free
-            </button>
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
+          {mode === "login" && (
+  <div className="flex flex-col items-center gap-2 mt-4">
+    <button
+      onClick={() => { setMode("reset"); setError(null); setSuccess(null); }}
+      className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+    >
+      Forgot your password?
+    </button>
+    <p className="text-xs text-gray-600">
+      Don&apos;t have an account?{" "}
+      <button onClick={() => setMode("signup")} className="text-violet-400 hover:text-violet-300 transition-colors">
+        Sign up free
+      </button>
+    </p>
+  </div>
+)}
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 
