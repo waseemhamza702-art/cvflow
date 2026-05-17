@@ -462,21 +462,21 @@ const handleReset = async () => {
 </button>
 
         {mode === "login" && (
-  <div className="flex flex-col items-center gap-2 mt-4">
-    <button
-      onClick={() => { setMode("reset"); setError(null); setSuccess(null); }}
-      className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
-    >
-      Forgot your password?
-    </button>
-    <p className="text-xs text-gray-600">
-      Don&apos;t have an account?{" "}
-      <button onClick={() => setMode("signup")} className="text-violet-400 hover:text-violet-300 transition-colors">
-        Sign up free
-      </button>
-    </p>
-  </div>
-)}
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <button
+              onClick={() => { setMode("reset"); setError(null); setSuccess(null); }}
+              className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+            >
+              Forgot your password?
+            </button>
+            <p className="text-xs text-gray-600">
+              Don&apos;t have an account?{" "}
+              <button onClick={() => setMode("signup")} className="text-violet-400 hover:text-violet-300 transition-colors">
+                Sign up free
+              </button>
+            </p>
+          </div>
+        )}
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 
