@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -299,11 +300,160 @@ function CVFlowLogo() {
   );
 }
 
+// ─── Auth Modal ───────────────────────────────────────────────────────────────
+
+type AuthMode = "login" | "signup";
+
+function AuthModal({ onClose }: { onClose: () => void }) {
+  const [mode, setMode] = useState<AuthMode>("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const handleSubmit = async () => {
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    if (mode === "signup") {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) setError(error.message);
+      else setSuccess("Check your email to confirm your account!");
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setError(error.message);
+      else onClose();
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+      {/* Modal */}
+      <div className="relative w-full max-w-md glass-md rounded-2xl border border-white/[0.1] p-8 shadow-2xl">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-white hover:bg-white/[0.06] transition-all"
+        >
+          <IconX className="w-4 h-4" />
+        </button>
+
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <CVFlowLogo />
+        </div>
+
+        {/* Tab switcher */}
+        <div className="flex glass rounded-xl p-1 mb-6 border border-white/[0.06]">
+          {(["login", "signup"] as AuthMode[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => { setMode(m); setError(null); setSuccess(null); }}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                mode === m
+                  ? "bg-violet-600 text-white shadow-sm"
+                  : "text-gray-500 hover:text-gray-300"
+              }`}
+            >
+              {m === "login" ? "Sign In" : "Sign Up"}
+            </button>
+          ))}
+        </div>
+
+        {/* Fields */}
+        <div className="space-y-3 mb-4">
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block uppercase tracking-wider">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full glass rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 border border-white/[0.08] focus:border-violet-500/50 focus:outline-none focus:ring-1 focus:ring-violet-500/30 transition-all"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1.5 block uppercase tracking-wider">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+              className="w-full glass rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 border border-white/[0.08] focus:border-violet-500/50 focus:outline-none focus:ring-1 focus:ring-violet-500/30 transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Error / Success */}
+        {error && (
+          <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 mb-4">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 mb-4">
+            {success}
+          </p>
+        )}
+
+        {/* Submit */}
+        <button
+          onClick={handleSubmit}
+          disabled={loading || !email || !password}
+          className="w-full btn-primary py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+            </svg>
+          ) : (
+            <IconSparkles className="w-4 h-4" />
+          )}
+          {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+        </button>
+
+        {mode === "login" && (
+          <p className="text-center text-xs text-gray-600 mt-4">
+            Don&apos;t have an account?{" "}
+            <button onClick={() => setMode("signup")} className="text-violet-400 hover:text-violet-300 transition-colors">
+              Sign up free
+            </button>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [user, setUser] = useState<{ email?: string } | null>(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -311,70 +461,117 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-md border-b border-white/[0.06] py-3" : "bg-transparent py-5"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 flex items-center justify-between">
-        <a href="#" className="hover:opacity-80 transition-opacity">
-          <CVFlowLogo />
-        </a>
+    <>
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
 
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/[0.04] transition-all duration-200"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <a href="#" className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200">
-            Sign In
-          </a>
-          <a href="#" className="btn-primary px-5 py-2 rounded-lg text-sm font-medium text-white">
-            Start Free
-          </a>
-        </div>
-
-        <button
-          className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <IconX /> : <IconBars />}
-        </button>
-      </div>
-
-      <div
-        className={`md:hidden transition-all duration-300 overflow-hidden ${
-          menuOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0"
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? "glass-md border-b border-white/[0.06] py-3" : "bg-transparent py-5"
         }`}
       >
-        <div className="glass-md border-t border-white/[0.06] px-5 py-4 flex flex-col gap-1">
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="py-2.5 px-3 text-gray-300 hover:text-white text-sm rounded-lg hover:bg-white/[0.04] transition-all"
-              onClick={() => setMenuOpen(false)}
-            >
-              {l.label}
-            </a>
-          ))}
-          <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
-            <a href="#" className="flex-1 py-2.5 text-center text-sm text-gray-400 border border-white/[0.08] rounded-lg">Sign In</a>
-            <a href="#" className="flex-1 py-2.5 text-center text-sm font-medium text-white btn-primary rounded-lg">Start Free</a>
+        <div className="max-w-7xl mx-auto px-5 lg:px-8 flex items-center justify-between">
+          <a href="#" className="hover:opacity-80 transition-opacity">
+            <CVFlowLogo />
+          </a>
+
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/[0.04] transition-all duration-200"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-3">
+            {user ? (
+              <>
+                <span className="text-xs text-gray-500 max-w-[140px] truncate">{user.email}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-lg transition-all"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="btn-primary px-5 py-2 rounded-lg text-sm font-medium text-white"
+                >
+                  Start Free
+                </button>
+              </>
+            )}
+          </div>
+
+          <button
+            className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <IconX /> : <IconBars />}
+          </button>
+        </div>
+
+        <div
+          className={`md:hidden transition-all duration-300 overflow-hidden ${
+            menuOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="glass-md border-t border-white/[0.06] px-5 py-4 flex flex-col gap-1">
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="py-2.5 px-3 text-gray-300 hover:text-white text-sm rounded-lg hover:bg-white/[0.04] transition-all"
+                onClick={() => setMenuOpen(false)}
+              >
+                {l.label}
+              </a>
+            ))}
+            <div className="flex gap-2 mt-3 pt-3 border-t border-white/[0.06]">
+              {user ? (
+                <button onClick={handleSignOut} className="flex-1 py-2.5 text-center text-sm text-gray-400 border border-white/[0.08] rounded-lg">
+                  Sign Out
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => { setAuthOpen(true); setMenuOpen(false); }} className="flex-1 py-2.5 text-center text-sm text-gray-400 border border-white/[0.08] rounded-lg">Sign In</button>
+                  <button onClick={() => { setAuthOpen(true); setMenuOpen(false); }} className="flex-1 py-2.5 text-center text-sm font-medium text-white btn-primary rounded-lg">Start Free</button>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }
 
@@ -1245,9 +1442,9 @@ function Footer() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function Home() {
+export default function Page() {
   return (
-    <main className="bg-black text-white overflow-x-hidden">
+    <div className="bg-black text-white min-h-screen">
       <Navbar />
       <Hero />
       <TrustedBy />
@@ -1258,6 +1455,6 @@ export default function Home() {
       <FAQ />
       <CTA />
       <Footer />
-    </main>
+    </div>
   );
 }
