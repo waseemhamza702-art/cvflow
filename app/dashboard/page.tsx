@@ -36,9 +36,10 @@ export default function Dashboard() {
     const { data: s } = await supabase.auth.getSession();
     console.log("SESSION:", s.session?.user?.id);
     console.log("ACCESS TOKEN:", s.session?.access_token?.slice(0,20));
+    const { data: { session } } = await supabase.auth.getSession();
     const { data: nr } = await supabase
       .from("resumes")
-      .insert({ title: "Untitled Resume", data: {} })
+      .insert({ title: "Untitled Resume", data: {}, user_id: session?.user.id })
       .select()
       .single();
     if (nr) router.push(`/dashboard/resume/${nr.id}`);
