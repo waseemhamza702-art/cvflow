@@ -33,6 +33,9 @@ export default function Dashboard() {
   }, []);
 
   const createResume = async () => {
+    const { data: s } = await supabase.auth.getSession();
+    console.log("SESSION:", s.session?.user?.id);
+    console.log("ACCESS TOKEN:", s.session?.access_token?.slice(0,20));
     const { data: nr } = await supabase
       .from("resumes")
       .insert({ title: "Untitled Resume", data: {} })
