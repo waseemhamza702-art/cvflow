@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -305,6 +306,7 @@ function CVFlowLogo() {
 type AuthMode = "login" | "signup" | "reset";
 
 function AuthModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -331,7 +333,7 @@ function AuthModal({ onClose }: { onClose: () => void }) {
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else onClose();
+      else { onClose(); router.push("/dashboard"); }
     }
     setLoading(false);
   };
