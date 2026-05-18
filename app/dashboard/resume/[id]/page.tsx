@@ -50,7 +50,6 @@ export default function ResumeBuilder() {
   const [skillInput, setSkillInput] = useState("");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const init = async () => {
       const { data: s } = await supabase.auth.getSession();
