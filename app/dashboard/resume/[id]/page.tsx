@@ -71,6 +71,22 @@ export default function ResumeBuilder() {
     }
   };
 
+  const handleExportPDF = async () => {
+    const res = await fetch("/api/export-pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data, title }),
+    });
+    if (!res.ok) { alert("PDF export failed"); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const save = async () => {
     setSaving(true);
     await supabase.from("resumes").update({ title, data, updated_at: new Date().toISOString() }).eq("id", id);
@@ -146,13 +162,21 @@ export default function ResumeBuilder() {
             className="bg-transparent text-sm font-medium text-white focus:outline-none border-b border-transparent focus:border-violet-500/50 pb-0.5 transition-all w-48"
           />
         </div>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 transition-opacity disabled:opacity-50"
-        >
-          {saving ? "Saving…" : saved ? "✓ Saved" : "Save"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white border border-violet-500/40 hover:bg-violet-500/10 transition-all"
+          >
+            ⬇ Export PDF
+          </button>
+          <button
+            onClick={save}
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {saving ? "Saving…" : saved ? "✓ Saved" : "Save"}
+          </button>
+        </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
