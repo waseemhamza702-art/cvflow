@@ -543,7 +543,7 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <span className="text-xs text-gray-500 max-w-[140px] truncate">{user.email}</span>
+                <a href="/dashboard" className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 rounded-lg transition-all">Dashboard</a>
                 <button
                   onClick={handleSignOut}
                   className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/[0.15] rounded-lg transition-all"
