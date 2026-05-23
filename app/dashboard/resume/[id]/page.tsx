@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import ResumePreview from "@/lib/ResumePreview";
 
 interface WorkExperience {
   company: string;
@@ -271,7 +272,9 @@ export default function ResumeBuilder() {
         </div>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-6 py-10 space-y-8">
+      <div className="flex h-[calc(100vh-53px)]">
+      {/* Left: Form */}
+      <div className="w-1/2 overflow-y-auto px-6 py-8 space-y-6 border-r border-white/[0.06]">
 
         {/* Personal Info */}
         <section className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
@@ -404,6 +407,13 @@ export default function ResumeBuilder() {
             {saving ? "Saving…" : saved ? "✓ Saved!" : "Save Resume"}
           </button>
         </div>
+      </div>
+      {/* Right: Preview */}
+      <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
+        <div className="max-w-[600px] mx-auto">
+          <ResumePreview data={data} />
+        </div>
+      </div>
       </div>
     </div>
   );
