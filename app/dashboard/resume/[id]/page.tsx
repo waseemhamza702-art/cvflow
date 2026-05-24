@@ -49,6 +49,7 @@ export default function ResumeBuilder() {
   const [saving, setSaving] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [exportCount, setExportCount] = useState(0);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [saved, setSaved] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
@@ -81,9 +82,23 @@ export default function ResumeBuilder() {
     }
   };
 
+  const handleUpgrade = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: sessionData.session?.user.id,
+        email: sessionData.session?.user.email,
+      }),
+    });
+    const { url } = await res.json();
+    window.location.href = url;
+  };
+
   const handleExportPDF = async () => {
     if (!isPro && exportCount >= 2) {
-      alert("Free plan limit reached (2 exports/month). Upgrade to Pro for unlimited exports!");
+      setShowUpgradeModal(true);
       return;
     }
     // Track export
@@ -431,7 +446,48 @@ export default function ResumeBuilder() {
           <ResumePreview data={data} />
         </div>
       </div>
+      {/* Upgrade Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setShowUpgradeModal(false)}>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="relative w-full max-w-md bg-gray-900 border border-violet-500/30 rounded-2xl p-8 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold text-white mb-2">Export Limit Reached</h2>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                You&apos;ve used your <span className="text-white font-semibold">2 free exports</span> this month.
+                Upgrade to Pro for unlimited PDF exports.
+              </p>
+            </div>
+            <div className="bg-violet-950/50 border border-violet-500/20 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-white font-semibold">CVFlow Pro</span>
+                <span className="text-2xl font-bold text-white">€19<span className="text-sm text-gray-400">/mo</span></span>
+              </div>
+              <ul className="space-y-2">
+                {["Unlimited PDF exports", "50+ premium templates", "AI writing assistant", "Priority support"].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                    <span className="text-violet-400">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <button
+              onClick={handleUpgrade}
+              className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-blue-600 hover:opacity-90 transition-opacity mb-3"
+            >
+              Upgrade to Pro — €19/month
+            </button>
+            <button
+              onClick={() => setShowUpgradeModal(false)}
+              className="w-full py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
+      )}
       </div>
     </div>
+
   );
 }
