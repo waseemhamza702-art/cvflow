@@ -1,12 +1,15 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateBold({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full font-sans text-[11px] leading-relaxed">
       <div className="bg-violet-700 text-white p-8">
-        <h1 className="text-3xl font-black tracking-tight">{data.name || "Your Name"}</h1>
+        <div className="flex items-center gap-4">
+          {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover border-2 border-violet-400 flex-shrink-0" />}
+          <h1 className="text-3xl font-black tracking-tight">{data.name || "Your Name"}</h1>
+        </div>
         {data.experience?.[0]?.role && <p className="text-violet-200 text-sm mt-1">{data.experience[0].role}</p>}
         <div className="flex flex-wrap gap-x-4 text-violet-300 mt-2 text-[10px]">
           {data.email && <span>{data.email}</span>}

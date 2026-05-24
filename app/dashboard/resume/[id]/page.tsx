@@ -118,6 +118,22 @@ export default function ResumeBuilder() {
     const lineH = 6;
     const check = (h: number) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
 
+    // Photo
+    if (data.photo) {
+      try {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        await new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; img.src = data.photo!; });
+        const canvas = document.createElement("canvas");
+        canvas.width = 60; canvas.height = 60;
+        const ctx = canvas.getContext("2d")!;
+        ctx.beginPath(); ctx.arc(30, 30, 30, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(img, 0, 0, 60, 60);
+        const imgData = canvas.toDataURL("image/jpeg");
+        doc.addImage(imgData, "JPEG", 210 - margin - 15, margin - 5, 15, 15);
+      } catch {}
+    }
+
     // Header
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);

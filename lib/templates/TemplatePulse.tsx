@@ -1,12 +1,15 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplatePulse({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full font-sans text-[11px] leading-relaxed">
       <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 p-8 text-white">
-        <h1 className="text-2xl font-black">{data.name || "Your Name"}</h1>
+        <div className="flex items-center gap-4">
+          {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover border-2 border-white/50 flex-shrink-0" />}
+          <h1 className="text-2xl font-black">{data.name || "Your Name"}</h1>
+        </div>
         {data.experience?.[0]?.role && <p className="text-white/80 text-sm mt-0.5">{data.experience[0].role}</p>}
         <div className="flex flex-wrap gap-x-4 text-white/60 mt-2 text-[10px]">
           {data.email && <span>{data.email}</span>}

@@ -1,11 +1,12 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateSlate({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full font-sans text-[11px] leading-relaxed flex">
       <div className="w-1/3 bg-slate-800 text-white p-6">
+        {data.photo && <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover border-2 border-slate-600 mb-3" />}
         <h1 className="text-xl font-bold mb-1">{data.name || "Your Name"}</h1>
         {data.experience?.[0]?.role && <p className="text-slate-300 text-[10px] mb-4">{data.experience[0].role}</p>}
         <div className="space-y-1 text-[9px] text-slate-400 mb-6">

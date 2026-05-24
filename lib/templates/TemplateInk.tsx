@@ -1,12 +1,15 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateInk({ data }: { data: ResumeData }) {
   return (
     <div className="bg-gray-900 text-gray-100 w-full h-full p-8 font-sans text-[11px] leading-relaxed">
       <div className="mb-6">
-        <h1 className="text-3xl font-black text-white tracking-tight">{data.name || "Your Name"}</h1>
+        <div className="flex items-center gap-4">
+          {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover border-2 border-yellow-400 flex-shrink-0" />}
+          <h1 className="text-3xl font-black text-white tracking-tight">{data.name || "Your Name"}</h1>
+        </div>
         {data.experience?.[0]?.role && <p className="text-yellow-400 font-medium mt-1">{data.experience[0].role}</p>}
         <div className="flex flex-wrap gap-x-4 text-gray-500 mt-2 text-[10px]">
           {data.email && <span>{data.email}</span>}

@@ -1,12 +1,15 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateMinimal({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full p-10 font-sans text-[11px] leading-relaxed">
       <div className="mb-8">
-        <h1 className="text-4xl font-light text-gray-900 tracking-tight">{data.name || "Your Name"}</h1>
+        <div className="flex items-center gap-4">
+          {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover flex-shrink-0" />}
+          <h1 className="text-4xl font-light text-gray-900 tracking-tight">{data.name || "Your Name"}</h1>
+        </div>
         <div className="flex flex-wrap gap-x-4 text-gray-400 mt-2 text-[10px]">
           {data.email && <span>{data.email}</span>}
           {data.phone && <span>{data.phone}</span>}

@@ -1,12 +1,15 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateExecutive({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full p-8 font-serif text-[11px] leading-relaxed">
       <div className="text-center border-b-2 border-gray-800 pb-4 mb-5">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-widest uppercase">{data.name || "Your Name"}</h1>
+        <div className="flex flex-col items-center gap-2">
+          {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover border-2 border-gray-300" />}
+          <h1 className="text-3xl font-bold text-gray-900 tracking-widest uppercase">{data.name || "Your Name"}</h1>
+        </div>
         {data.experience?.[0]?.role && <p className="text-sm text-gray-600 mt-1 tracking-wider">{data.experience[0].role}</p>}
         <div className="flex justify-center flex-wrap gap-x-4 text-gray-500 mt-2 text-[10px]">
           {data.email && <span>{data.email}</span>}

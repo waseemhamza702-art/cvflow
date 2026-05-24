@@ -1,13 +1,16 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateNova({ data }: { data: ResumeData }) {
   return (
     <div className="bg-gray-50 text-gray-800 w-full h-full p-8 font-sans text-[11px] leading-relaxed">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{data.name || "Your Name"}</h1>
+          <div className="flex items-center gap-3">
+            {data.photo && <img src={data.photo} alt="" className="w-14 h-14 rounded-full object-cover flex-shrink-0" />}
+            <h1 className="text-2xl font-bold text-gray-900">{data.name || "Your Name"}</h1>
+          </div>
           {data.experience?.[0]?.role && <p className="text-blue-600 font-medium mt-0.5">{data.experience[0].role}</p>}
         </div>
         <div className="text-right text-[9px] text-gray-400">

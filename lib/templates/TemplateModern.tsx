@@ -1,13 +1,13 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateModern({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full p-8 font-sans text-[11px] leading-relaxed">
       <div className="flex items-center gap-6 mb-6">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-          {(data.name || "Y").charAt(0)}
+        <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+          {data.photo ? <img src={data.photo} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white text-xl font-bold">{(data.name || "Y").charAt(0)}</div>}
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{data.name || "Your Name"}</h1>
