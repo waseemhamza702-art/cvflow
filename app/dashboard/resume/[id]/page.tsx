@@ -47,6 +47,8 @@ export default function ResumeBuilder() {
   const [title, setTitle] = useState("Untitled Resume");
   const [data, setData] = useState<ResumeData>(empty);
   const [saving, setSaving] = useState(false);
+  const [isPro, setIsPro] = useState(false);
+  const [exportCount, setExportCount] = useState(0);
   const [saved, setSaved] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
@@ -60,6 +62,13 @@ export default function ResumeBuilder() {
         setTitle(row.title);
         if (row.data && Object.keys(row.data).length > 0) setData(row.data);
       }
+      // Check subscription
+      const { data: sub } = await supabase.from("subscriptions").select("status").single();
+      if (sub?.status === "active") setIsPro(true);
+      // Count exports this month
+      const startOfMonth = new Date(); startOfMonth.setDate(1); startOfMonth.setHours(0,0,0,0);
+      const { count } = await supabase.from("export_usage").select("*", { count: "exact", head: true }).gte("created_at", startOfMonth.toISOString());
+      setExportCount(count || 0);
     };
     init();
   }, []);
@@ -73,6 +82,14 @@ export default function ResumeBuilder() {
   };
 
   const handleExportPDF = async () => {
+    if (!isPro && exportCount >= 2) {
+      alert("Free plan limit reached (2 exports/month). Upgrade to Pro for unlimited exports!");
+      return;
+    }
+    // Track export
+    const { data: sessionData } = await supabase.auth.getSession();
+    await supabase.from("export_usage").insert({ user_id: sessionData.session?.user.id });
+    setExportCount(prev => prev + 1);
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ format: "a4", unit: "mm" });
     const margin = 20;
