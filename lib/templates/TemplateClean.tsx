@@ -1,11 +1,13 @@
 "use client";
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 export default function TemplateClean({ data }: { data: ResumeData }) {
   return (
     <div className="bg-white text-gray-800 w-full h-full p-8 font-sans text-[11px] leading-relaxed">
-      <div className="border-b-2 border-violet-600 pb-4 mb-5">
+      <div className="border-b-2 border-violet-600 pb-4 mb-5 flex items-start gap-4">
+        {data.photo && <img src={data.photo} alt="" className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-violet-100" />}
+        <div>
         <h1 className="text-2xl font-bold text-gray-900">{data.name || "Your Name"}</h1>
         {data.experience?.[0]?.role && <p className="text-sm text-violet-600 font-semibold mt-0.5">{data.experience[0].role}</p>}
         <div className="flex flex-wrap gap-x-3 text-gray-500 mt-1.5 text-[10px]">
@@ -13,6 +15,7 @@ export default function TemplateClean({ data }: { data: ResumeData }) {
           {data.phone && <span>· {data.phone}</span>}
           {data.location && <span>· {data.location}</span>}
           {data.linkedin && <span>· {data.linkedin}</span>}
+        </div>
         </div>
       </div>
       {data.summary && <div className="mb-5"><h2 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Summary</h2><p className="text-gray-600">{data.summary}</p></div>}

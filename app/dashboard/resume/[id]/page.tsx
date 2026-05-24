@@ -31,6 +31,7 @@ interface ResumeData {
   experience: WorkExperience[];
   education: Education[];
   skills: string[];
+  photo?: string;
 }
 
 const empty: ResumeData = {
@@ -38,6 +39,7 @@ const empty: ResumeData = {
   experience: [{ company: "", role: "", start: "", end: "", bullets: [""] }],
   education: [{ school: "", degree: "", year: "", gpa: "" }],
   skills: [],
+  photo: "",
 };
 
 export default function ResumeBuilder() {
@@ -215,6 +217,18 @@ export default function ResumeBuilder() {
     doc.save(`${title}.pdf`);
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+    const path = `${userId}/${id}.${file.name.split(".").pop()}`;
+    const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (error) { alert("Upload failed"); return; }
+    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+    set("photo", urlData.publicUrl);
+  };
+
   const save = async () => {
     setSaving(true);
     await supabase.from("resumes").update({ title, data, template, updated_at: new Date().toISOString() }).eq("id", id);
@@ -314,6 +328,33 @@ export default function ResumeBuilder() {
         {/* Personal Info */}
         <section className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6">
           <h2 className="text-base font-semibold text-white mb-5">Personal Info</h2>
+          {/* Photo Upload */}
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/[0.1] bg-white/[0.03] flex items-center justify-center flex-shrink-0">
+              {data.photo ? (
+                <img src={data.photo} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8 text-gray-600" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              )}
+            </div>
+            <div>
+              <label className="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.08] text-xs text-gray-400 hover:text-white hover:border-white/[0.2] transition-all">
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                Upload Photo
+                <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+              </label>
+              {data.photo && (
+                <button onClick={() => set("photo", "")} className="mt-1 text-xs text-red-500/70 hover:text-red-400 transition-colors">
+                  Remove photo
+                </button>
+              )}
+              <p className="text-[10px] text-gray-600 mt-1">Optional · JPG, PNG</p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {([["name","Full Name"],["email","Email"],["phone","Phone"],["location","Location"],["linkedin","LinkedIn URL"]] as [keyof ResumeData, string][]).map(([f, l]) => (
               <div key={f} className={f === "linkedin" ? "sm:col-span-2" : ""}>

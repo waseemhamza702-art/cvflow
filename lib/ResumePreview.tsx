@@ -12,7 +12,7 @@ import TemplatePulse from "./templates/TemplatePulse";
 
 interface WorkExperience { company: string; role: string; start: string; end: string; bullets: string[]; }
 interface Education { school: string; degree: string; year: string; gpa: string; }
-interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; }
+interface ResumeData { name: string; email: string; phone: string; location: string; linkedin: string; summary: string; experience: WorkExperience[]; education: Education[]; skills: string[]; photo?: string; }
 
 export default function ResumePreview({ data, template = "clean" }: { data: ResumeData; template?: string }) {
   const props = { data };
