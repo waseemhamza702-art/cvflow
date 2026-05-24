@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ResumePreview from "@/lib/ResumePreview";
+import { TEMPLATES } from "@/lib/templates/index";
 
 interface WorkExperience {
   company: string;
@@ -47,6 +48,7 @@ export default function ResumeBuilder() {
   const [title, setTitle] = useState("Untitled Resume");
   const [data, setData] = useState<ResumeData>(empty);
   const [saving, setSaving] = useState(false);
+  const [template, setTemplate] = useState("clean");
   const [isPro, setIsPro] = useState(false);
   const [exportCount, setExportCount] = useState(0);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -62,6 +64,7 @@ export default function ResumeBuilder() {
       if (row) {
         setTitle(row.title);
         if (row.data && Object.keys(row.data).length > 0) setData(row.data);
+        if (row.template) setTemplate(row.template);
       }
       // Check subscription
       const { data: sub } = await supabase.from("subscriptions").select("status").single();
@@ -214,7 +217,7 @@ export default function ResumeBuilder() {
 
   const save = async () => {
     setSaving(true);
-    await supabase.from("resumes").update({ title, data, updated_at: new Date().toISOString() }).eq("id", id);
+    await supabase.from("resumes").update({ title, data, template, updated_at: new Date().toISOString() }).eq("id", id);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -441,9 +444,29 @@ export default function ResumeBuilder() {
         </div>
       </div>
       {/* Right: Preview */}
-      <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
+      <div className="w-1/2 overflow-y-auto bg-gray-100">
+        {/* Template Selector */}
+        <div className="bg-gray-200 px-4 py-2 flex gap-2 overflow-x-auto border-b border-gray-300 flex-shrink-0">
+          {TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => (!t.pro || isPro) && setTemplate(t.id)}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                template === t.id
+                  ? "bg-violet-600 text-white"
+                  : t.pro && !isPro
+                  ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-600 hover:bg-violet-50 hover:text-violet-600"
+              }`}
+            >
+              {t.name} {t.pro && !isPro ? "🔒" : ""}
+            </button>
+          ))}
+        </div>
+        <div className="p-8">
         <div className="max-w-[600px] mx-auto">
-          <ResumePreview data={data} />
+          <ResumePreview data={data} template={template} />
+        </div>
         </div>
       </div>
       {/* Upgrade Modal */}
