@@ -16,6 +16,13 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>("");
 
+  const [isPro, setIsPro] = useState(false);
+
+  const checkSubscription = async () => {
+    const { data } = await supabase.from("subscriptions").select("status").single();
+    if (data?.status === "active") setIsPro(true);
+  };
+
   useEffect(() => {
     const init = async () => {
       const { data: sessionData } = await supabase.auth.getSession();
@@ -28,7 +35,7 @@ export default function Dashboard() {
       setResumes(list || []);
       setLoading(false);
     };
-    init();
+    init().then(() => checkSubscription());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -45,6 +52,20 @@ export default function Dashboard() {
   const deleteResume = async (id: string) => {
     await supabase.from("resumes").delete().eq("id", id);
     setResumes(prev => prev.filter((r) => r.id !== id));
+  };
+
+  const handleUpgrade = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: sessionData.session?.user.id,
+        email: sessionData.session?.user.email,
+      }),
+    });
+    const { url } = await res.json();
+    window.location.href = url;
   };
 
   const signOut = async () => {
@@ -68,6 +89,13 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs text-gray-500">{userEmail}</span>
+          {isPro ? (
+            <span className="text-xs font-bold text-violet-400 bg-violet-500/10 border border-violet-500/20 px-2.5 py-1 rounded-full">Pro ✦</span>
+          ) : (
+            <button onClick={handleUpgrade} className="text-xs font-semibold text-white bg-gradient-to-r from-violet-600 to-blue-600 px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity">
+              Upgrade to Pro
+            </button>
+          )}
           <button onClick={signOut} className="text-sm text-gray-400 hover:text-white border border-white/[0.08] px-4 py-2 rounded-lg transition-all">
             Sign Out
           </button>
