@@ -21,78 +21,78 @@ const COMPANIES = [
 
 const FEATURES = [
   {
-    icon: "sparkles",
-    title: "AI Resume Generation",
-    desc: "Generate a tailored, professional resume in seconds. Our AI learns from millions of successful resumes to craft yours with precision.",
+    icon: "pencil",
+    title: "Easy Resume Builder",
+    desc: "Fill in your details with our guided builder and see your resume take shape in real time. No design skills needed.",
     badge: "Core",
   },
   {
-    icon: "shield",
-    title: "ATS Optimization",
-    desc: "Pass every applicant tracking system with confidence. We analyze job descriptions and embed the right keywords automatically.",
-    badge: "Smart",
-  },
-  {
-    icon: "pencil",
-    title: "Resume Tailoring",
-    desc: "Instantly customize your resume for any role. Paste a job description and watch CVFlow rewrite your resume to match it perfectly.",
-    badge: "Fast",
-  },
-  {
     icon: "layout",
-    title: "Professional Templates",
-    desc: "Choose from 50+ designer-crafted templates built for every industry, role, and career stage — from fresh grad to executive.",
-    badge: "50+",
+    title: "10 Professional Templates",
+    desc: "Choose from 10 designer-crafted templates covering modern, classic, and creative styles — for every industry and career stage.",
+    badge: "10",
   },
   {
-    icon: "chat",
-    title: "AI Writing Assistant",
-    desc: "Struggling with bullet points? Get smart, impact-driven suggestions that highlight your achievements and quantify your results.",
-    badge: "AI",
+    icon: "sparkles",
+    title: "Live Preview",
+    desc: "See your resume update in real time as you type. Switch between templates instantly and find the perfect look.",
+    badge: "Live",
   },
   {
     icon: "download",
     title: "PDF Export",
-    desc: "Download pixel-perfect PDFs ready to submit anywhere. Every template is engineered for flawless rendering across all platforms.",
+    desc: "Download a pixel-perfect DIN A4 PDF ready to submit anywhere. Clean, professional, and ATS-friendly formatting.",
     badge: "Export",
+  },
+  {
+    icon: "shield",
+    title: "Photo Support",
+    desc: "Add a professional photo to your resume with one click. Looks great in every template.",
+    badge: "New",
+  },
+  {
+    icon: "chat",
+    title: "Multiple Resumes",
+    desc: "Create and save multiple resumes for different roles. Tailor each one to the job you are applying for.",
+    badge: "Pro",
   },
 ];
 
 const STEPS = [
   {
     n: "01",
-    title: "Create Your Profile",
-    desc: "Import your LinkedIn profile or fill in your work history, skills, and achievements in our guided builder. Takes under 5 minutes.",
-    detail: "Smart import · No formatting needed",
+    title: "Create Your Resume",
+    desc: "Sign up for free and fill in your details using our simple guided builder. Add your experience, education, skills, and a photo. Takes under 5 minutes.",
+    detail: "Free to start · No credit card needed",
   },
   {
     n: "02",
-    title: "AI Crafts Your Resume",
-    desc: "Our AI analyzes your profile, the target role, and current hiring trends to generate a compelling, ATS-ready resume instantly.",
-    detail: "ATS scoring · Keyword analysis",
+    title: "Choose Your Template",
+    desc: "Pick from 10 professional templates across modern, classic, and creative styles. See your resume update live as you switch between designs.",
+    detail: "10 templates · Live preview",
   },
   {
     n: "03",
-    title: "Apply & Land Interviews",
-    desc: "Download your polished resume, track applications, and tailor for each new role in seconds. Watch interview invites roll in.",
-    detail: "Unlimited exports · Application tracker",
+    title: "Download & Apply",
+    desc: "Export your finished resume as a DIN A4 PDF and start applying. Free users get 2 exports per month, Pro users get unlimited.",
+    detail: "DIN A4 PDF · Instant download",
   },
 ];
 
 const PRICING = [
   {
-    name: "Starter",
+    name: "Free",
     price: "0",
     period: "forever",
     desc: "Everything you need to get started",
     cta: "Get Started Free",
     featured: false,
     features: [
-      "3 resume exports / month",
-      "5 professional templates",
-      "Basic AI suggestions",
-      "ATS keyword check",
-      "PDF & DOCX export",
+      "2 PDF exports / month",
+      "3 free templates",
+      "Live preview",
+      "Photo upload",
+      "Multiple resumes",
       "Email support",
     ],
   },
@@ -101,35 +101,15 @@ const PRICING = [
     price: "19",
     period: "month",
     desc: "Unlimited power for serious job seekers",
-    cta: "Start Free Trial",
+    cta: "Upgrade to Pro",
     featured: true,
     features: [
-      "Unlimited resume exports",
-      "50+ premium templates",
-      "Advanced AI writing",
-      "ATS score analyzer",
-      "One-click job tailoring",
-      "Cover letter generator",
-      "Application tracker",
+      "Unlimited PDF exports",
+      "All 10 premium templates",
+      "Live preview",
+      "Photo upload",
+      "Multiple resumes",
       "Priority support",
-    ],
-  },
-  {
-    name: "Team",
-    price: "49",
-    period: "month",
-    desc: "For career coaches and recruiting teams",
-    cta: "Start Free Trial",
-    featured: false,
-    features: [
-      "Everything in Pro",
-      "5 team seats included",
-      "Shared template library",
-      "Client management",
-      "Team analytics dashboard",
-      "White-label branding",
-      "API access",
-      "Dedicated account manager",
     ],
   },
 ];
@@ -137,39 +117,39 @@ const PRICING = [
 const FAQ_ITEMS = [
   {
     q: "What makes CVFlow different from other resume builders?",
-    a: "CVFlow uses advanced AI trained on millions of successful resumes and real hiring data. Unlike generic builders, our AI understands ATS systems, industry-specific keywords, and what hiring managers actually want — giving you a real, measurable edge.",
+    a: "CVFlow focuses on simplicity and quality. You get a clean, guided builder, 10 professionally designed templates, live preview, and instant PDF export — without unnecessary complexity or fake features.",
   },
   {
-    q: "Does CVFlow guarantee my resume will pass ATS systems?",
-    a: "Our ATS optimization engine analyzes your resume against 300+ ATS patterns and real job descriptions. While no tool can offer absolute guarantees, our users report a 94% pass-through rate — significantly above the industry average of 25%.",
+    q: "How many resumes can I create?",
+    a: "Both Free and Pro users can create unlimited resumes. Free users can export 2 PDFs per month. Pro users get unlimited exports.",
   },
   {
-    q: "Can I start with my existing resume?",
-    a: "Absolutely. Upload your existing PDF or DOCX and CVFlow will parse and import it instantly. You can also import directly from your LinkedIn profile with one click.",
+    q: "Which templates are free?",
+    a: "Free users have access to 3 templates: Clean, Minimal, and Nova. Pro users unlock all 10 templates including modern, classic, and creative designs.",
   },
   {
     q: "What file formats can I export to?",
-    a: "All plans support PDF and DOCX export. Pro and Team plans also include TXT (for online applications), JSON (for API integrations), and a shareable web link for your resume.",
+    a: "Currently CVFlow supports PDF export in DIN A4 format. The PDF is clean, professional, and ready to submit to any employer.",
   },
   {
-    q: "How does the one-click tailoring feature work?",
-    a: "Paste any job description into CVFlow and our AI rewrites your resume — reordering sections, adjusting keywords, and rephrasing bullet points — to match that specific role. It takes under 30 seconds.",
+    q: "Can I add a photo to my resume?",
+    a: "Yes! You can upload a professional photo to your resume. It will appear in all templates and in your exported PDF.",
   },
   {
     q: "Can I cancel my subscription anytime?",
-    a: "Yes, completely. Cancel anytime from your account settings with no questions asked. You will retain access until the end of your billing period and can export all your data.",
+    a: "Yes, completely. Cancel anytime from your account settings with no questions asked. You will retain Pro access until the end of your billing period.",
   },
   {
     q: "Is my data private and secure?",
-    a: "Your data is encrypted at rest and in transit using AES-256 and TLS 1.3. We never sell your data or use it to train models without explicit consent. You can permanently delete your account and all data at any time.",
+    a: "Yes. Your data is stored securely and we never sell it or share it with third parties. You can delete your account and all data at any time.",
   },
 ];
 
 const STATS = [
-  { value: "50K+", label: "Resumes Built" },
-  { value: "94%", label: "Interview Rate" },
-  { value: "150+", label: "Templates" },
-  { value: "4.9★", label: "User Rating" },
+  { value: "10", label: "Templates" },
+  { value: "Free", label: "To Start" },
+  { value: "A4", label: "PDF Export" },
+  { value: "Fast", label: "& Simple" },
 ];
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
