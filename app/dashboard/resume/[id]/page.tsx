@@ -112,37 +112,33 @@ export default function ResumeBuilder() {
     setExportCount(prev => prev + 1);
 
     if (!previewRef.current) return;
-    const { default: html2canvas } = await import("html2canvas");
-    const { jsPDF } = await import("jspdf");
-    // Fix oklch colors not supported by html2canvas
-    const fixOklch = (el: HTMLElement) => {
-      const computed = window.getComputedStyle(el);
-      const props = ["color", "backgroundColor", "borderColor", "borderTopColor", "borderBottomColor", "borderLeftColor", "borderRightColor"];
-      props.forEach(prop => {
-        const val = computed.getPropertyValue(prop);
-        if (val.includes("oklch")) {
-          (el.style as unknown as Record<string, string>)[prop] = "#000000";
-        }
-      });
-      Array.from(el.children).forEach(child => fixOklch(child as HTMLElement));
-    };
-    fixOklch(previewRef.current);
-
-    const canvas = await html2canvas(previewRef.current, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-    });
-    const imgData = canvas.toDataURL("image/jpeg", 0.95);
-    const pdf = new jsPDF({ format: "a4", unit: "mm", orientation: "portrait" });
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = canvas.width;
-    const imgHeight = canvas.height;
-    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-    pdf.addImage(imgData, "JPEG", 0, 0, imgWidth * ratio, imgHeight * ratio);
-    pdf.save(`${title}.pdf`);
+    // Open print dialog with just the resume preview
+    const printWindow = window.open("", "_blank");
+    if (!printWindow || !previewRef.current) return;
+    const html = previewRef.current.innerHTML;
+    const styles = Array.from(document.styleSheets)
+      .map(s => { try { return Array.from(s.cssRules).map(r => r.cssText).join("\n"); } catch { return ""; } })
+      .join("\n");
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${title}</title>
+          <style>
+            ${styles}
+            @page { margin: 0; size: A4; }
+            body { margin: 0; padding: 0; }
+            .resume-print { width: 210mm; min-height: 297mm; }
+          </style>
+        </head>
+        <body>
+          <div class="resume-print">${html}</div>
+          <script>window.onload = () => { window.print(); window.close(); }<\/script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
