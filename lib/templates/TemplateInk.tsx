@@ -8,7 +8,7 @@ export default function TemplateInk({ data }: { data: ResumeData }) {
     <div className="bg-zinc-900 text-white w-full h-full font-sans text-[10.5px] leading-relaxed">
       <div className="px-7 py-5 border-b border-zinc-700 flex items-center gap-5">
         {data.photo ? (
-          <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-center flex-shrink-0" style={{border:"2px solid #eab308"}} />
+          <img src={data.photo} alt="" className="w-24 h-32 rounded-lg object-cover object-top flex-shrink-0" style={{border:"2px solid #eab308"}} />
         ) : (
           <div className="w-20 h-20 rounded-full bg-zinc-700 flex items-center justify-center text-2xl font-bold flex-shrink-0 text-yellow-400">{(data.name||"?").charAt(0)}</div>
         )}

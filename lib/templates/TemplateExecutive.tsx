@@ -9,7 +9,7 @@ export default function TemplateExecutive({ data }: { data: ResumeData }) {
       <div className="bg-rose-600 text-white px-7 py-5">
         <div className="flex items-center gap-5">
           {data.photo ? (
-            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-center flex-shrink-0" style={{border:"3px solid rgba(255,255,255,0.5)"}} />
+            <img src={data.photo} alt="" className="w-24 h-32 rounded-lg object-cover object-top flex-shrink-0" style={{border:"3px solid rgba(255,255,255,0.5)"}} />
           ) : (
             <div className="w-20 h-20 rounded-full bg-rose-500 flex items-center justify-center text-2xl font-bold flex-shrink-0">{(data.name||"?").charAt(0)}</div>
           )}

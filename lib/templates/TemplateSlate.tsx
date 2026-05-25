@@ -9,7 +9,7 @@ export default function TemplateSlate({ data }: { data: ResumeData }) {
       <div className="w-[36%] bg-gray-900 flex flex-col border-r border-gray-800">
         <div className="px-5 pt-6 pb-4 text-center border-b border-gray-800">
           {data.photo ? (
-            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-center mx-auto mb-3" style={{border:"2px solid #a855f7"}} />
+            <img src={data.photo} alt="" className="w-24 h-32 rounded-lg object-cover object-top mx-auto mb-3" style={{border:"2px solid #a855f7"}} />
           ) : (
             <div className="w-20 h-20 rounded-full bg-gray-700 mx-auto mb-3 flex items-center justify-center text-2xl font-bold text-purple-400">{(data.name||"?").charAt(0)}</div>
           )}
