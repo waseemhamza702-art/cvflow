@@ -116,25 +116,24 @@ export default function ResumeBuilder() {
     const printWindow = window.open("", "_blank");
     if (!printWindow || !previewRef.current) return;
     const html = previewRef.current.innerHTML;
-    const styles = Array.from(document.styleSheets)
-      .map(s => { try { return Array.from(s.cssRules).map(r => r.cssText).join("\n"); } catch { return ""; } })
-      .join("\n");
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
           <title>${title}</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
           <style>
-            ${styles}
             @page { margin: 0; size: A4; }
-            body { margin: 0; padding: 0; }
+            body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .resume-print { width: 210mm; min-height: 297mm; }
           </style>
         </head>
         <body>
           <div class="resume-print">${html}</div>
-          <script>window.onload = () => { window.print(); window.close(); }<\/script>
+          <script>
+            setTimeout(() => { window.print(); window.close(); }, 1000);
+          <\/script>
         </body>
       </html>
     `);
