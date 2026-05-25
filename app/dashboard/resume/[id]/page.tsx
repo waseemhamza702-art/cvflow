@@ -114,19 +114,25 @@ export default function ResumeBuilder() {
     if (!previewRef.current) return;
     const { default: html2canvas } = await import("html2canvas");
     const { jsPDF } = await import("jspdf");
+    // Fix oklch colors not supported by html2canvas
+    const fixOklch = (el: HTMLElement) => {
+      const computed = window.getComputedStyle(el);
+      const props = ["color", "backgroundColor", "borderColor", "borderTopColor", "borderBottomColor", "borderLeftColor", "borderRightColor"];
+      props.forEach(prop => {
+        const val = computed.getPropertyValue(prop);
+        if (val.includes("oklch")) {
+          (el.style as unknown as Record<string, string>)[prop] = "#000000";
+        }
+      });
+      Array.from(el.children).forEach(child => fixOklch(child as HTMLElement));
+    };
+    fixOklch(previewRef.current);
+
     const canvas = await html2canvas(previewRef.current, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
-      onclone: (doc) => {
-        doc.querySelectorAll("*").forEach((el) => {
-          const s = (el as HTMLElement).style;
-          if (s.color?.includes("oklch")) s.color = "";
-          if (s.backgroundColor?.includes("oklch")) s.backgroundColor = "";
-          if (s.borderColor?.includes("oklch")) s.borderColor = "";
-        });
-      },
     });
     const imgData = canvas.toDataURL("image/jpeg", 0.95);
     const pdf = new jsPDF({ format: "a4", unit: "mm", orientation: "portrait" });
