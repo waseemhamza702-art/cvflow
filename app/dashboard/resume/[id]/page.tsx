@@ -119,6 +119,14 @@ export default function ResumeBuilder() {
       useCORS: true,
       allowTaint: true,
       backgroundColor: "#ffffff",
+      onclone: (doc) => {
+        doc.querySelectorAll("*").forEach((el) => {
+          const s = (el as HTMLElement).style;
+          if (s.color?.includes("oklch")) s.color = "";
+          if (s.backgroundColor?.includes("oklch")) s.backgroundColor = "";
+          if (s.borderColor?.includes("oklch")) s.borderColor = "";
+        });
+      },
     });
     const imgData = canvas.toDataURL("image/jpeg", 0.95);
     const pdf = new jsPDF({ format: "a4", unit: "mm", orientation: "portrait" });
