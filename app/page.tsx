@@ -633,14 +633,14 @@ function Hero() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center gap-3 mb-14">
           <a
-            href="#"
+            href="/dashboard"
             className="btn-primary flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white w-full sm:w-auto justify-center"
           >
             <IconSparkles className="w-4 h-4" />
             Start Free
           </a>
           <a
-            href="#"
+            href="/dashboard"
             className="flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-gray-300 border border-white/[0.1] hover:border-white/[0.2] hover:text-white hover:bg-white/[0.03] transition-all duration-200 w-full sm:w-auto justify-center"
           >
             Build Resume
