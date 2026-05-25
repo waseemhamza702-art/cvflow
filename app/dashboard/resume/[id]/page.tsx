@@ -124,10 +124,15 @@ export default function ResumeBuilder() {
           <title>${title}</title>
           <script src="https://cdn.tailwindcss.com"><\/script>
           <style>
-            @page { margin: 0; size: A4; }
-            body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .resume-print { width: 210mm; min-height: 297mm; overflow: hidden; }
-            * { box-sizing: border-box; }
+            @page { margin: 0; size: A4 portrait; }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { width: 210mm; height: 297mm; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .resume-print { width: 210mm; height: 297mm; overflow: hidden; position: relative; }
+            img { max-width: 100%; }
+            @media print {
+              html, body { width: 210mm; height: 297mm; }
+              .resume-print { page-break-after: avoid; }
+            }
           </style>
         </head>
         <body>
