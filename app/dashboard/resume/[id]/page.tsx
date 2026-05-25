@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ResumePreview from "@/lib/ResumePreview";
@@ -50,6 +50,7 @@ export default function ResumeBuilder() {
   const [title, setTitle] = useState("Untitled Resume");
   const [data, setData] = useState<ResumeData>(empty);
   const [saving, setSaving] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
   const [template, setTemplate] = useState("clean");
   const [isPro, setIsPro] = useState(false);
   const [exportCount, setExportCount] = useState(0);
@@ -106,131 +107,28 @@ export default function ResumeBuilder() {
       setShowUpgradeModal(true);
       return;
     }
-    // Track export
     const { data: sessionData } = await supabase.auth.getSession();
     await supabase.from("export_usage").insert({ user_id: sessionData.session?.user.id });
     setExportCount(prev => prev + 1);
+
+    if (!previewRef.current) return;
+    const { default: html2canvas } = await import("html2canvas");
     const { jsPDF } = await import("jspdf");
-    const doc = new jsPDF({ format: "a4", unit: "mm" });
-    const margin = 20;
-    let y = margin;
-    const pageH = 297;
-    const lineH = 6;
-    const check = (h: number) => { if (y + h > pageH - margin) { doc.addPage(); y = margin; } };
-
-    // Photo
-    if (data.photo) {
-      try {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        await new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; img.src = data.photo!; });
-        const canvas = document.createElement("canvas");
-        canvas.width = 60; canvas.height = 60;
-        const ctx = canvas.getContext("2d")!;
-        ctx.beginPath(); ctx.arc(30, 30, 30, 0, Math.PI * 2); ctx.clip();
-        ctx.drawImage(img, 0, 0, 60, 60);
-        const imgData = canvas.toDataURL("image/jpeg");
-        doc.addImage(imgData, "JPEG", 210 - margin - 15, margin - 5, 15, 15);
-      } catch {}
-    }
-
-    // Header
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.setTextColor(17, 24, 39);
-    doc.text(data.name || "Your Name", margin, y); y += 8;
-
-    if (data.experience?.[0]?.role) {
-      doc.setFontSize(11); doc.setTextColor(124, 58, 237);
-      doc.text(data.experience[0].role, margin, y); y += 6;
-    }
-
-    const contact = [data.email, data.phone, data.location, data.linkedin].filter(Boolean).join("  ·  ");
-    if (contact) {
-      doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(107, 114, 128);
-      doc.text(contact, margin, y); y += 5;
-    }
-
-    // Divider
-    doc.setDrawColor(124, 58, 237); doc.setLineWidth(0.5);
-    doc.line(margin, y, 210 - margin, y); y += 6;
-
-    const sectionTitle = (t: string) => {
-      check(8);
-      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(156, 163, 175);
-      doc.text(t.toUpperCase(), margin, y); y += 5;
-      doc.setDrawColor(243, 244, 246); doc.setLineWidth(0.3);
-      doc.line(margin, y, 210 - margin, y); y += 4;
-    };
-
-    // Summary
-    if (data.summary) {
-      sectionTitle("Summary");
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(75, 85, 99);
-      const lines = doc.splitTextToSize(data.summary, 170);
-      lines.forEach((l: string) => { check(lineH); doc.text(l, margin, y); y += lineH; });
-      y += 3;
-    }
-
-    // Experience
-    if (data.experience?.length > 0) {
-      sectionTitle("Experience");
-      data.experience.forEach((exp) => {
-        check(10);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(17, 24, 39);
-        doc.text(exp.company || "", margin, y);
-        const dateStr = [exp.start, exp.end].filter(Boolean).join(" – ");
-        doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(156, 163, 175);
-        doc.text(dateStr, 210 - margin, y, { align: "right" });
-        y += 5;
-        if (exp.role) {
-          doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(124, 58, 237);
-          doc.text(exp.role, margin, y); y += 5;
-        }
-        exp.bullets?.filter((b: string) => b.trim()).forEach((b: string) => {
-          check(lineH);
-          doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(55, 65, 81);
-          const lines = doc.splitTextToSize("▸ " + b, 165);
-          lines.forEach((l: string) => { check(lineH); doc.text(l, margin + 3, y); y += lineH; });
-        });
-        y += 3;
-      });
-    }
-
-    // Education
-    if (data.education?.length > 0) {
-      sectionTitle("Education");
-      data.education.forEach((edu) => {
-        check(10);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(17, 24, 39);
-        doc.text(edu.school || "", margin, y);
-        if (edu.year) {
-          doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(156, 163, 175);
-          doc.text(edu.year, 210 - margin, y, { align: "right" });
-        }
-        y += 5;
-        if (edu.degree) {
-          doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(107, 114, 128);
-          doc.text(edu.degree, margin, y); y += 5;
-        }
-        if (edu.gpa) {
-          doc.setFontSize(9); doc.setTextColor(107, 114, 128);
-          doc.text("GPA: " + edu.gpa, margin, y); y += 5;
-        }
-        y += 2;
-      });
-    }
-
-    // Skills
-    if (data.skills?.length > 0) {
-      sectionTitle("Skills");
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(55, 65, 81);
-      const skillText = data.skills.join("  ·  ");
-      const lines = doc.splitTextToSize(skillText, 170);
-      lines.forEach((l: string) => { check(lineH); doc.text(l, margin, y); y += lineH; });
-    }
-
-    doc.save(`${title}.pdf`);
+    const canvas = await html2canvas(previewRef.current, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+    });
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
+    const pdf = new jsPDF({ format: "a4", unit: "mm", orientation: "portrait" });
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    pdf.addImage(imgData, "JPEG", 0, 0, imgWidth * ratio, imgHeight * ratio);
+    pdf.save(`${title}.pdf`);
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -521,7 +419,7 @@ export default function ResumeBuilder() {
           ))}
         </div>
         <div className="p-8">
-        <div className="max-w-[600px] mx-auto">
+        <div className="max-w-[600px] mx-auto" ref={previewRef}>
           <ResumePreview data={data} template={template} />
         </div>
         </div>
