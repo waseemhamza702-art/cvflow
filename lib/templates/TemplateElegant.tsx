@@ -8,7 +8,7 @@ export default function TemplateElegant({ data }: { data: ResumeData }) {
     <div className="bg-stone-50 w-full h-full font-sans text-[10.5px] leading-relaxed">
       <div className="bg-stone-800 text-white px-8 py-5 flex items-center gap-6">
         {data.photo ? (
-          <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover flex-shrink-0" style={{border:"2px solid #d4af37"}} />
+          <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-top flex-shrink-0" style={{border:"2px solid #d4af37"}} />
         ) : (
           <div className="w-20 h-20 rounded-full bg-stone-600 flex items-center justify-center text-2xl font-bold flex-shrink-0 text-yellow-400">{(data.name||"?").charAt(0)}</div>
         )}

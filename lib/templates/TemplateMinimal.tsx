@@ -10,7 +10,7 @@ export default function TemplateMinimal({ data }: { data: ResumeData }) {
       <div className="w-[35%] bg-teal-700 text-white flex flex-col">
         <div className="px-5 pt-6 pb-4 text-center border-b border-teal-600">
           {data.photo ? (
-            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover mx-auto mb-3" style={{border:"3px solid white"}} />
+            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-top mx-auto mb-3" style={{border:"3px solid white"}} />
           ) : (
             <div className="w-20 h-20 rounded-full bg-teal-500 mx-auto mb-3 flex items-center justify-center text-2xl font-bold">{(data.name||"?").charAt(0)}</div>
           )}

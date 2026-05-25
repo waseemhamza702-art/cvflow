@@ -11,7 +11,7 @@ export default function TemplateClean({ data }: { data: ResumeData }) {
         {/* Photo + Name */}
         <div className="bg-slate-900 px-5 pt-6 pb-5 text-center">
           {data.photo ? (
-            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover border-3 border-orange-400 mx-auto mb-3" style={{border:"3px solid #fb923c"}} />
+            <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-top border-3 border-orange-400 mx-auto mb-3" style={{border:"3px solid #fb923c"}} />
           ) : (
             <div className="w-20 h-20 rounded-full bg-slate-600 mx-auto mb-3 flex items-center justify-center text-2xl font-bold text-orange-400">
               {(data.name||"?").charAt(0)}

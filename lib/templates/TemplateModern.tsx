@@ -10,7 +10,7 @@ export default function TemplateModern({ data }: { data: ResumeData }) {
         <div className="w-[38%] bg-indigo-700 text-white px-5 pt-7 pb-5 flex flex-col gap-4">
           <div className="text-center">
             {data.photo ? (
-              <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover mx-auto mb-3" style={{border:"3px solid rgba(255,255,255,0.4)"}} />
+              <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-top mx-auto mb-3" style={{border:"3px solid rgba(255,255,255,0.4)"}} />
             ) : (
               <div className="w-20 h-20 rounded-full bg-indigo-500 mx-auto mb-3 flex items-center justify-center text-2xl font-bold">{(data.name||"?").charAt(0)}</div>
             )}

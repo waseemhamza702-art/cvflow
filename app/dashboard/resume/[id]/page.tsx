@@ -126,7 +126,8 @@ export default function ResumeBuilder() {
           <style>
             @page { margin: 0; size: A4; }
             body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .resume-print { width: 210mm; min-height: 297mm; }
+            .resume-print { width: 210mm; min-height: 297mm; overflow: hidden; }
+            * { box-sizing: border-box; }
           </style>
         </head>
         <body>
