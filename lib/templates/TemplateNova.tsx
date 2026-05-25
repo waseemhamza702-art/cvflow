@@ -9,7 +9,7 @@ export default function TemplateNova({ data }: { data: ResumeData }) {
       {/* Header */}
       <div className="bg-blue-900 text-white px-8 py-5 flex items-center gap-5">
         {data.photo ? (
-          <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-top flex-shrink-0" style={{border:"3px solid #93c5fd"}} />
+          <img src={data.photo} alt="" className="w-20 h-20 rounded-full object-cover object-center flex-shrink-0" style={{border:"3px solid #93c5fd"}} />
         ) : (
           <div className="w-20 h-20 rounded-full bg-blue-700 flex items-center justify-center text-2xl font-bold flex-shrink-0">{(data.name||"?").charAt(0)}</div>
         )}
